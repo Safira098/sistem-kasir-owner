@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard SmartTill</title>
+    <link rel="stylesheet" href="style_dashboard.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body class="dashboard-page">
+    <div id="sidebar" class="sidebar"> 
+        <div class="profile-section">
+            <a href="profile.html" class="profile-link-sidebar">
+                <div class="profile-icon"><i class="fas fa-user"></i></div> 
+                <p><span id="loggedInUsernameSidebar">Profile</span></p>
+            </a>
+        </div>
+        <ul class="menu">
+            <li><a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+            <li><a href="laporan_penjualan.html"><i class="fas fa-chart-line"></i> <span>Laporan Penjualan</span></a></li>
+            <li><a href="laporan_pembelian.html"><i class="fas fa-shopping-basket"></i> <span>Laporan Pembelian</span></a></li>
+            <li><a href="laporan_barang.html"><i class="fas fa-boxes"></i> <span>Laporan Barang</span></a></li>
+            <li><a href="laporan_keuangan.html"><i class="fas fa-wallet"></i> <span>Laporan Keuangan</span></a></li>
+        </ul>
+    </div>
+
+    <div id="mainContent" class="main-content"> 
+        <header class="navbar">
+            <div class="navbar-left">
+                <div class="app-title">SmartTill</div>
+            </div>
+            <div class="user-profile">
+                <a href="profile.html" class="profile-link-navbar">
+                    <span id="loggedInUsername"></span> <i class="fas fa-user-circle icon-profile"></i> 
+                </a>
+            </div>
+        </header>
+
+        <div class="dashboard-grid">
+            <div class="card item-terjual">
+                <h3>Barang Telah Terjual</h3>
+                <p id="bBarangTerjuak" class="value">0</p>
+            </div>
+            <div class="card kategori-barang">
+                <h3>Kategori Barang</h3>
+                <p id="kategoriBarangCount" class="value">0</p>
+            </div>
+            <div class="card total-transaksi">
+                <h3>Total Transaksi</h3>
+                <p class="value">0</p>
+            </div>
+            <div class="card stok-barang">
+                <h3>Stok Barang</h3>
+                <p class="value">0</p>
+            </div>
+        </div>
+
+        <div class="penjualan-harian-section">
+            <div class="section-header">
+                <h3>Penjualan Bulanan</h3>
+                <div class="dropdown">
+                    <select>
+                        <option value="agustus">Agustus</option>
+                        <option value="juli">Juli</option>
+                        <option value="juni">Juni</option>
+                    </select>
+                </div>
+            </div>
+            <div class="chart-container">
+                <img src="img/penjualan.png" alt="Grafik Penjualan Bulanan" style="width:100%; height:auto; max-height: 400px; object-fit: contain;">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Untuk menampilkan username di header
+            const usernameSpan = document.getElementById('loggedInUsername');
+            const storedUsername = localStorage.getItem('loggedInUser');
+            if (storedUsername) {
+                usernameSpan.textContent = `Hello, ${storedUsername}!`;
+                const usernameSidebarSpan = document.getElementById('loggedInUsernameSidebar');
+                if (usernameSidebarSpan) {
+                    usernameSidebarSpan.textContent = storedUsername;
+                }
+            } else {
+                console.warn('Username not found in localStorage. Redirecting to login...');
+                window.location.href = '/login.html'; // Redirect jika tidak ada username
+            }
+
+            // === JavaScript untuk Sidebar (tanpa Hamburger Toggle) ===
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            const menuLinksText = document.querySelectorAll('.sidebar .menu a span, .profile-section p span'); 
+
+            // Fungsi untuk mengontrol visibilitas teks di sidebar (default terlihat)
+            function toggleSidebarText(isVisible) {
+                menuLinksText.forEach(span => {
+                    span.style.opacity = isVisible ? '1' : '0';
+                    span.style.width = isVisible ? 'auto' : '0'; 
+                });
+            }
+
+            // Fungsi untuk mengatur layout saat halaman dimuat atau ukuran layar berubah
+            function adjustLayoutOnLoad() {
+                // Tanpa hamburger, sidebar akan selalu terbuka di desktop, dan mungkin menyusut di mobile
+                if (window.innerWidth <= 768) { 
+                    sidebar.classList.add('sidebar-collapsed'); 
+                    mainContent.classList.add('main-content-expanded'); 
+                    toggleSidebarText(false); 
+                } else {
+                    sidebar.classList.remove('sidebar-collapsed'); 
+                    mainContent.classList.remove('main-content-expanded'); 
+                    toggleSidebarText(true); 
+                }
+            }
+            
+            adjustLayoutOnLoad(); // Panggil saat halaman dimuat
+            window.addEventListener('resize', adjustLayoutOnLoad); // Panggil saat ukuran jendela berubah
+
+            // JavaScript untuk menandai menu aktif berdasarkan URL
+            const currentPath = window.location.pathname; 
+            const menuLinks = document.querySelectorAll('.sidebar .menu li a');
+
+            menuLinks.forEach(link => {
+                link.parentElement.classList.remove('active'); 
+
+                const linkPath = link.getAttribute('href');
+                if (linkPath) { 
+                    const fileNameFromLink = linkPath.split('/').pop(); 
+                    const currentFileName = currentPath.split('/').pop(); 
+
+                    if (fileNameFromLink === currentFileName) {
+                        link.parentElement.classList.add('active'); 
+                    } else if (currentFileName === '' && fileNameFromLink === 'dashboard.html') {
+                        link.parentElement.classList.add('active');
+                    }
+                }
+            });
+
+            // === FUNGSI UNTUK MENGAMBIL DAN MENAMPILKAN JUMLAH KATEGORI ===
+            async function fetchKategoriCount() {
+                const username = localStorage.getItem('loggedInUser'); // Ambil username untuk autentikasi
+
+                if (!username) {
+                    console.error('Username not found in localStorage. Cannot fetch category count.');
+                    document.getElementById('kategoriBarangCount').textContent = 'Error';
+                    return; 
+                }
+
+                try {
+                    const response = await fetch('/api/kategori-count', {
+                        headers: {
+                            'X-Username': username 
+                        }
+                    }); 
+                    if (!response.ok) {
+                        if (response.status === 401) { 
+                            console.warn('Unauthorized access to category count API. Redirecting to login...');
+                            window.location.href = '/login.html'; 
+                        }
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const data = await response.json(); 
+                    const kategoriCountElement = document.getElementById('kategoriBarangCount'); 
+                    
+                    if (kategoriCountElement) {
+                        kategoriCountElement.textContent = data.count; 
+                    } else {
+                        console.error('Element with ID "kategoriBarangCount" not found.');
+                    }
+                } catch (error) {
+                    console.error('Error fetching kategori count:', error);
+                    const kategoriCountElement = document.getElementById('kategoriBarangCount');
+                    if (kategoriCountElement) {
+                        kategoriCountElement.textContent = 'Error';
+                    }
+                }
+            }
+
+            fetchKategoriCount();
+
+            // Tambahkan fungsionalitas untuk Total Barang Terjual, Stok Barang, dan Total Transaksi
+            async function fetchDashboardCounts() {
+                const username = localStorage.getItem('loggedInUser');
+                if (!username) return;
+
+                try {
+                    // Fetch Total Barang Terjual (menggunakan endpoint baru yang mengambil dari tabel NOTA)
+                    const barangTerjualResponse = await fetch('/api/barang-terjual-count', { headers: { 'X-Username': username } });
+                    if (barangTerjualResponse.ok) {
+                        const data = await barangTerjualResponse.json();
+                        console.log('Data Barang Terjual Diterima:', data); 
+                        document.getElementById('bBarangTerjuak').textContent = data.count;
+                    } else {
+                        console.error('Failed to fetch total barang terjual:', await barangTerjualResponse.text());
+                        document.getElementById('bBarangTerjuak').textContent = 'Error';
+                    }
+
+                    // Fetch Total Stok Barang 
+                    const barangResponse = await fetch('/api/barang', { headers: { 'X-Username': username } });
+                    if (barangResponse.ok) {
+                        const barangData = await barangResponse.json();
+                        const totalStok = barangData.reduce((sum, item) => sum + (item.stok_awal || 0), 0);
+                        document.querySelector('.card.stok-barang .value').textContent = totalStok;
+                    } else {
+                        console.error('Failed to fetch total stok barang:', await barangResponse.text());
+                        document.querySelector('.card.stok-barang .value').textContent = 'Error';
+                    }
+
+                    // Fetch Total Transaksi (menggunakan endpoint khusus)
+                    const totalTransaksiResponse = await fetch('/api/total-transaksi', { headers: { 'X-Username': username } });
+                    const totalTransaksiElement = document.querySelector('.card.total-transaksi .value');
+                    if (totalTransaksiResponse.ok) {
+                        const data = await totalTransaksiResponse.json();
+                        totalTransaksiElement.textContent = data.count;
+                    } else {
+                        console.error('Failed to fetch total transactions:', await totalTransaksiResponse.text());
+                        totalTransaksiElement.textContent = 'Error';
+                    }
+
+                } catch (error) {
+                    console.error('Error fetching dashboard counts:', error);
+                    document.getElementById('bBarangTerjuak').textContent = 'Error';
+                    document.querySelector('.card.stok-barang .value').textContent = 'Error';
+                    document.querySelector('.card.total-transaksi .value').textContent = 'Error';
+                }
+            }
+
+            fetchDashboardCounts(); 
+
+        }); 
+    </script>
+</body>
+</html>

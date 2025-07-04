@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrasi</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* CSS umum untuk memusatkan halaman seperti login.html */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #2196F3; /* Warna biru yang sama dengan halaman login */
+            display: flex;
+            justify-content: center; /* Memusatkan secara horizontal */
+            align-items: center; /* Memusatkan secara vertikal */
+            min-height: 100vh; /* Memastikan body mengambil seluruh tinggi viewport */
+            margin: 0; /* Menghapus margin default body */
+            flex-direction: column; /* Mengatur item dalam kolom jika ada lebih dari satu */
+        }
+
+        .register-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 400px; /* Ukuran kontainer */
+            text-align: center;
+        }
+
+        .register-container h2 {
+            margin-bottom: 25px;
+            color: #333;
+            font-size: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select { /* Menyatukan styling untuk input dan select */
+            width: calc(100% - 20px); /* Adjust for padding */
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 15px; /* DIUBAH: Ukuran font disamakan menjadi 16px */
+            font-family: Arial, sans-serif; /* DITAMBAHKAN: Font family disamakan */
+            box-sizing: border-box; /* Penting untuk lebar yang konsisten */
+        }
+
+        /* Styling spesifik untuk elemen select agar tampilan lebih konsisten */
+        .form-group select {
+            -webkit-appearance: none; /* Menghapus gaya default browser di WebKit */
+            -moz-appearance: none; /* Menghapus gaya default browser di Mozilla */
+            appearance: none; /* Menghapus gaya default browser */
+            background-color: #fff; /* Pastikan latar belakang sama */
+            /* Anda bisa menambahkan ikon panah dropdown kustom jika ingin tampilan yang lebih persis sama di semua browser */
+            /* Contoh: background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292%22%20height%3D%22292%22%3E%3Cpath%20fill%3D%22%23000000%22%20d%3D%22M287%2C197.3l-131%2C131c-4%2C4-10%2C4-14%2C0L7%2C197.3c-4%2C-4-4%2C-10%2C0%2C-14l14-14c4%2C-4%2C10%2C-4%2C14%2C0l102%2C102l102%2C-102c4%2C-4%2C10%2C-4%2C14%2C0l14%2C14C291%2C187.3%2C291%2C193.3%2C287%2C197.3z%22%2F%3E%3C%2Fsvg%3E'); */
+            /* background-repeat: no-repeat; */
+            /* background-position: right 10px center; */
+            /* background-size: 12px; */
+        }
+
+        .form-group .password-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-group .password-wrapper input {
+            flex-grow: 1;
+            padding-right: 40px; /* Space for the eye icon */
+        }
+
+        .form-group .password-wrapper .toggle-password {
+            position: absolute;
+            right: 10px;
+            cursor: pointer;
+            color: #888;
+            font-size: 18px;
+            user-select: none;
+        }
+
+        .register-button {
+            background-color: #007BFF; /* Warna biru untuk tombol */
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin-top: 15px;
+            transition: background-color 0.3s ease;
+        }
+
+        .register-button:hover {
+            background-color: #0056b3;
+        }
+
+        .login-link {
+            margin-top: 25px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .login-link a {
+            color: #007BFF;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <h2>Registrasi</h2>
+        <form id="registerForm">
+            <div class="form-group">
+                <label for="namaLengkap">Nama Lengkap</label>
+                <input type="text" id="namaLengkap" name="namaLengkap" placeholder="Nama Lengkap" required>
+            </div>
+            <div class="form-group">
+                <label for="userID">Username</label>
+                <input type="text" id="userID" name="userID" placeholder="Username" required>
+            </div>
+            <div class="form-group">
+                <label for="noTelpon">Nomor Telepon</label>
+                <input type="tel" id="noTelpon" name="noTelpon" placeholder="Nomor Telepon" required>
+            </div>
+            <div class="form-group">
+                <label for="role">Role</label>
+                <select id="role" name="role" required>
+                    <option value="">Pilih Role</option>
+                    <option value="Owner">Owner</option>
+                    <option value="Kasir">Kasir</option>
+                    <option value="Gudang">Gudang</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div class="password-wrapper">
+                    <input type="password" id="password" name="password" placeholder="Password" required>
+                    <span class="toggle-password" onclick="togglePasswordVisibility('password')">👁️</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="confirmPassword">Konfirmasi Password</label>
+                <div class="password-wrapper">
+                    <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Konfirmasi Password" required>
+                    <span class="toggle-password" onclick="togglePasswordVisibility('confirmPassword')">👁️</span>
+                </div>
+            </div>
+            <button type="submit" class="register-button">Daftar</button>
+        </form>
+        <div class="login-link">
+            Sudah mempunyai akun? <a href="login.html">Login</a>
+        </div>
+    </div>
+
+    <script>
+        function togglePasswordVisibility(fieldId) {
+            const passwordField = document.getElementById(fieldId);
+            const toggleIcon = passwordField.nextElementSibling;
+
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                toggleIcon.textContent = '🔒';
+            } else {
+                passwordField.type = 'password';
+                toggleIcon.textContent = '👁️';
+            }
+        }
+
+        document.getElementById('registerForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const namaLengkap = document.getElementById('namaLengkap').value;
+            const userID = document.getElementById('userID').value;
+            const noTelpon = document.getElementById('noTelpon').value;
+            const role = document.getElementById('role').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (password !== confirmPassword) {
+                alert('Password dan konfirmasi password tidak cocok!');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ namaLengkap, userID, noTelpon, role, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // --- BARIS YANG DIUBAH/DIHAPUS ---
+                    // alert('Registrasi berhasil! Silakan login.'); // Baris ini dihapus/dikomentari
+                    window.location.href = 'login.html'; // Langsung redirect ke halaman login
+                } else {
+                    console.error('Registrasi gagal:', data.message);
+                    alert('Registrasi gagal: ' + (data.message || 'Terjadi kesalahan.'));
+                }
+            } catch (error) {
+                console.error('Error during registration:', error);
+                alert('Terjadi kesalahan saat menghubungi server.');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Owner - SmartTill</title>
+    <link rel="stylesheet" href="style_profile.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="top-navbar">
+            <div class="logo">SmartTill</div>
+            <div class="profile-info">
+                <a href="dashboard.html">
+                    <i class="fas fa-user-circle"></i> Profile
+                </a>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="sidebar">
+                <ul>
+                    <li><a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                    <li><a href="laporan_penjualan.html"><i class="fas fa-chart-line"></i> Laporan Penjualan</a></li>
+                    <li><a href="laporan_pembelian.html"><i class="fas fa-shopping-basket"></i> Laporan Pembelian</a></li>
+                    <li><a href="laporan_barang.html"><i class="fas fa-boxes"></i> Laporan Barang</a></li>
+                    <li><a href="laporan_keuangan.html"><i class="fas fa-wallet"></i> Laporan Keuangan</a></li>
+                </ul>
+            </div>
+
+            <div class="content-area">
+                <h2>Profile Owner</h2>
+
+                
+                <div class="profile-form-container">
+                    <div class="form-group">
+                        <label for="fullName">Nama Lengkap</label>
+                        <input type="text" id="fullName" class="form-control" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" class="form-control" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phoneNumber">No Telepon</label>
+                        <input type="text" id="phoneNumber" class="form-control" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="role">Role</label>
+                        <input type="text" id="role" class="form-control" readonly>
+                    </div>
+
+                    <div class="form-group password-group" style="display:none;">
+                        <label for="oldPassword">Kata Sandi Lama</label>
+                        <input type="password" id="oldPassword" class="form-control">
+                    </div>
+
+                    <div class="form-group password-group" style="display:none;">
+                        <label for="newPassword">Kata Sandi Baru</label>
+                        <input type="password" id="newPassword" class="form-control">
+                    </div>
+
+                    <button class="btn btn-primary" id="editProfileBtn"><i class="fas fa-edit"></i> Edit</button>
+                    <button class="btn btn-success" id="saveProfileBtn" style="display:none;"><i class="fas fa-save"></i> Simpan</button>
+                    <button class="btn btn-secondary" id="cancelEditBtn" style="display:none; margin-left: 10px;"><i class="fas fa-times"></i> Batal</button>
+                </div>
+
+                <div class="logout-container">
+                    <button class="btn btn-danger" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                </div>
+
+                <!-- Modal untuk pesan -->
+                <div id="messageModal" class="modal" style="display:none;">
+                    <div class="modal-content">
+                        <span class="close-button">&times;</span>
+                        <p id="modalMessage"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const fullNameInput = document.getElementById('fullName');
+            const usernameInput = document.getElementById('username');
+            const phoneNumberInput = document.getElementById('phoneNumber');
+            const roleInput = document.getElementById('role');
+            const oldPasswordInput = document.getElementById('oldPassword');
+            const newPasswordInput = document.getElementById('newPassword');
+            const passwordGroups = document.querySelectorAll('.password-group'); // Untuk mengontrol visibilitas field password
+
+            const editProfileBtn = document.getElementById('editProfileBtn');
+            const saveProfileBtn = document.getElementById('saveProfileBtn');
+            const cancelEditBtn = document.getElementById('cancelEditBtn');
+            const logoutBtn = document.getElementById('logoutBtn');
+
+            const messageModal = document.getElementById('messageModal');
+            const modalMessage = document.getElementById('modalMessage');
+            const closeButton = document.querySelector('.close-button');
+
+            let originalProfileData = {}; // Untuk menyimpan data asli sebelum diedit
+
+            // Fungsi untuk menampilkan pesan modal
+            function showMessageModal(message) {
+                modalMessage.textContent = message;
+                messageModal.style.display = 'block';
+            }
+
+            // Menutup modal ketika tombol close diklik
+            closeButton.addEventListener('click', () => {
+                messageModal.style.display = 'none';
+            });
+
+            // Menutup modal ketika area di luar modal diklik
+            window.addEventListener('click', (event) => {
+                if (event.target === messageModal) {
+                    messageModal.style.display = 'none';
+                }
+            });
+
+            // Fungsi untuk mengambil data profil
+            async function fetchProfileData() {
+                const loggedInUsername = localStorage.getItem('loggedInUser');
+                if (!loggedInUsername) {
+                    console.error('Username tidak ditemukan di localStorage. Redirecting to login...');
+                    window.location.href = '/login.html';
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/api/profile?username=${loggedInUsername}`, {
+                        headers: {
+                            'X-Username': loggedInUsername // Kirim username di header untuk autentikasi
+                        }
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        console.error('Gagal mengambil data profil:', errorData.message);
+                        if (response.status === 401) {
+                            showMessageModal('Sesi Anda telah berakhir. Silakan login kembali.');
+                            setTimeout(() => { window.location.href = '/login.html'; }, 2000);
+                        } else {
+                            showMessageModal(`Gagal memuat profil: ${errorData.message}`);
+                        }
+                        return;
+                    }
+
+                    const userData = await response.json();
+                    console.log('Data profil diterima:', userData);
+
+                    // Isi formulir dengan data yang diterima
+                    fullNameInput.value = userData.nama_lengkap || '';
+                    usernameInput.value = userData.username || '';
+                    phoneNumberInput.value = userData.no_telpon || '';
+                    roleInput.value = userData.role || '';
+
+                    // Simpan data asli untuk fungsi batal
+                    originalProfileData = {
+                        nama_lengkap: userData.nama_lengkap,
+                        username: userData.username,
+                        no_telpon: userData.no_telpon,
+                        role: userData.role
+                    };
+
+                    // Update username di navbar
+                    const loggedInUsernameNavbar = document.getElementById('loggedInUsernameNavbar');
+                    if (loggedInUsernameNavbar) {
+                        loggedInUsernameNavbar.textContent = userData.username;
+                    }
+
+                } catch (error) {
+                    console.error('Error fetching profile data:', error);
+                    showMessageModal('Terjadi kesalahan saat memuat data profil.');
+                }
+            }
+
+            // Fungsi untuk mengaktifkan/menonaktifkan mode edit
+            function toggleEditMode(isEditing) {
+                fullNameInput.readOnly = !isEditing;
+                usernameInput.readOnly = !isEditing;
+                phoneNumberInput.readOnly = !isEditing;
+                roleInput.readOnly = !isEditing; // Role mungkin perlu dropdown jika ada pilihan tetap
+
+                // Tampilkan/sembunyikan field password
+                passwordGroups.forEach(group => {
+                    group.style.display = isEditing ? 'block' : 'none';
+                });
+
+                // Kosongkan field password saat masuk mode edit
+                if (isEditing) {
+                    oldPasswordInput.value = '';
+                    newPasswordInput.value = '';
+                }
+
+                editProfileBtn.style.display = isEditing ? 'none' : 'inline-block';
+                saveProfileBtn.style.display = isEditing ? 'inline-block' : 'none';
+                cancelEditBtn.style.display = isEditing ? 'inline-block' : 'none';
+            }
+
+            // Event listener untuk tombol Edit
+            editProfileBtn.addEventListener('click', () => {
+                toggleEditMode(true);
+            });
+
+            // Event listener untuk tombol Batal
+            cancelEditBtn.addEventListener('click', () => {
+                // Kembalikan nilai ke data asli
+                fullNameInput.value = originalProfileData.nama_lengkap || '';
+                usernameInput.value = originalProfileData.username || '';
+                phoneNumberInput.value = originalProfileData.no_telpon || '';
+                roleInput.value = originalProfileData.role || '';
+                toggleEditMode(false);
+            });
+
+            // Event listener untuk tombol Simpan
+            saveProfileBtn.addEventListener('click', async () => {
+                const currentUsername = localStorage.getItem('loggedInUser');
+                const updatedData = {
+                    currentUsername: currentUsername, // Username lama untuk identifikasi
+                    namaLengkap: fullNameInput.value,
+                    newUsername: usernameInput.value, // Username baru
+                    noTelpon: phoneNumberInput.value,
+                    role: roleInput.value
+                };
+
+                // Tambahkan field password jika diisi
+                if (oldPasswordInput.value || newPasswordInput.value) {
+                    if (!oldPasswordInput.value || !newPasswordInput.value) {
+                        showMessageModal('Untuk mengubah kata sandi, kata sandi lama dan kata sandi baru harus diisi.');
+                        return;
+                    }
+                    updatedData.oldPassword = oldPasswordInput.value;
+                    updatedData.newPassword = newPasswordInput.value;
+                }                
+
+                try {
+                    const response = await fetch('/api/profile/update', {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Username': currentUsername // Kirim username lama di header untuk autentikasi
+                        },
+                        body: JSON.stringify(updatedData)
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        showMessageModal(result.message);
+                        // Perbarui username di localStorage jika username berubah
+                        if (result.updatedUsername && result.updatedUsername !== currentUsername) {
+                            localStorage.setItem('loggedInUser', result.updatedUsername);
+                        }
+                        // Refresh data profil setelah update berhasil
+                        fetchProfileData();
+                        toggleEditMode(false); // Kembali ke mode non-edit
+                    } else {
+                        showMessageModal(`Gagal menyimpan profil: ${result.message}`);
+                        console.error('Error updating profile:', result.details || result.message);
+                    }
+                } catch (error) {
+                    console.error('Error during profile update:', error);
+                    showMessageModal('Terjadi kesalahan saat menyimpan profil.');
+                }
+            });
+
+            // Event listener untuk tombol Logout
+            logoutBtn.addEventListener('click', () => {
+                localStorage.removeItem('loggedInUser'); // Hapus username dari localStorage
+                window.location.href = '/login.html'; // Redirect ke halaman login
+            });
+
+            // Panggil fungsi untuk mengambil data profil saat halaman dimuat
+            fetchProfileData();
+        });
+    </script>
+</body>
+</html>

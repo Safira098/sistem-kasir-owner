@@ -1,0 +1,247 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+/* Basic Reset & Body Styling */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f0f2f5; /* Latar belakang abu-abu muda */
+    color: #333;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Top Navbar */
+.top-navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #36a2eb; /* Biru cerah dari gambar */
+    color: white;
+    padding: 15px 30px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.top-navbar .logo {
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.top-navbar .profile-info {
+    font-size: 16px;
+}
+
+/* Styling untuk link profil di navbar atas */
+.top-navbar .profile-info a {
+    color: white; /* Warna teks putih seperti yang lain di navbar */
+    text-decoration: none; /* Hilangkan garis bawah */
+    display: flex; /* Untuk menjaga ikon dan teks sejajar */
+    align-items: center;
+    transition: opacity 0.3s ease; /* Efek hover */
+}
+
+.top-navbar .profile-info a:hover {
+    opacity: 0.8; /* Sedikit transparan saat dihover */
+}
+
+.top-navbar .profile-info i {
+    margin-right: 8px;
+}
+
+/* Main Content Area (Sidebar + Content) */
+.main-content {
+    display: flex;
+    flex: 1; /* Mengambil sisa ruang vertikal */
+}
+
+/* Sidebar */
+.sidebar {
+    width: 250px;
+    background-color: #ffffff; /* Latar belakang putih */
+    padding: 20px 0;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    margin-bottom: 5px;
+}
+
+.sidebar ul li a {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    color: #555;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+    font-size: 15px;
+}
+
+.sidebar ul li a i {
+    margin-right: 10px;
+    width: 20px; /* Pastikan ikon sejajar */
+    text-align: center;
+}
+
+.sidebar ul li a:hover {
+    background-color: #e9ecef;
+    color: #36a2eb;
+}
+
+.sidebar ul li a.active {
+    background-color: #e9ecef; /* Kondisi hover/aktif yang sedikit lebih gelap */
+    color: #36a2eb; /* Warna biru untuk item aktif */
+    font-weight: 500;
+}
+
+/* Content Area */
+.content-area {
+    flex: 1; /* Mengambil sisa ruang horizontal */
+    padding: 30px;
+    background-color: #f8f9fa; /* Agak lebih terang dari latar belakang body */
+}
+
+.content-area h2 {
+    color: #333;
+    margin-bottom: 25px;
+    font-size: 26px;
+    font-weight: 600;
+}
+
+.profile-form-container {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+    max-width: 600px; /* Batasi lebar seperti di gambar */
+    margin-bottom: 30px; /* Jarak antara blok ini dan logout */
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #555;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    font-size: 16px;
+    appearance: none; /* Hapus panah default select */
+    background-color: #fff;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http://www.w3.org/2000/svg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23000%22%20d%3D%22M287%2069.9a15.8%2015.8%200%200%200-22.3%200L146.2%20188.7%2027.7%2069.9A15.8%2015.8%200%200%200%205.4%2092.2l128.8%20128.8a15.8%2015.8%200%200%200%2022.3%200l128.8-128.8c6.2-6.2%206.2-16.4-.1-22.3z%22/%3E%3C/svg%3E'); /* Panah kustom */
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 12px;
+    cursor: pointer;
+}
+
+.form-control:focus {
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Buttons */
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+    display: inline-flex; /* Untuk penyesuaian ikon */
+    align-items: center;
+    justify-content: center;
+}
+
+.btn i {
+    margin-right: 8px;
+}
+
+.btn-primary {
+    background-color: #36a2eb; /* Biru dari gambar */
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #288ace; /* Biru lebih gelap saat hover */
+}
+
+.logout-container {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+    max-width: 600px;
+    text-align: center;
+}
+
+.btn-danger {
+    background-color: #dc3545; /* Merah dari gambar */
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: #c82333; /* Merah lebih gelap saat hover */
+}
+
+/* Responsive adjustments (dasar) */
+@media (max-width: 768px) {
+    .main-content {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        padding: 10px 0;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+
+    .sidebar ul {
+        display: flex;
+        justify-content: space-around; /* Atau bungkus jika terlalu banyak item */
+        flex-wrap: wrap;
+    }
+
+    .sidebar ul li {
+        margin-bottom: 0;
+    }
+
+    .sidebar ul li a {
+        padding: 10px 15px;
+        font-size: 14px;
+    }
+
+    .top-navbar {
+        padding: 10px 15px;
+    }
+
+    .content-area {
+        padding: 20px;
+    }
+
+    .profile-form-container, .logout-container {
+        padding: 20px;
+    }
+}

@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Halaman laporan barang SmartTill, sistem kasir pintar.">
+    <meta name="author" content="SmartTill Development Team">
+    <title>Laporan Barang - SmartTill</title>
+    <link rel="stylesheet" href="style_dashboard.css">
+    <link rel="stylesheet" href="style_barang.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body class="laporan-barang-page">
+    <div id="sidebar" class="sidebar">
+        <div class="profile-section">
+            <a href="profile.html" class="profile-link-sidebar">
+            <div class="profile-icon" aria-label="User Profile"><i class="fas fa-user"></i></div>
+            <p><span id="loggedInUsernameSidebar">Profile</span></p>
+            </a>
+        </div>
+        <ul class="menu">
+            <li><a href="dashboard.html" aria-label="Dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+            <li><a href="laporan_penjualan.html" aria-label="Laporan Penjualan"><i class="fas fa-chart-line"></i> Laporan Penjualan</a></li>
+            <li><a href="laporan_pembelian.html" aria-label="Laporan Pembelian"><i class="fas fa-shopping-basket"></i> Laporan Pembelian</a></li>
+            <li class="active"><a href="laporan_barang.html" aria-label="Laporan Barang"><i class="fas fa-boxes"></i> Laporan Barang</a></li>
+            <li><a href="laporan_keuangan.html" aria-label="Laporan Keuangan"><i class="fas fa-wallet"></i> Laporan Keuangan</a></li>
+        </ul>
+    </div>
+
+    <div id="mainContent" class="main-content">
+        <header class="navbar">
+            <div class="navbar-left">
+                <div class="app-title">SmartTill</div>
+            </div>
+            <div class="user-profile">
+                <a href="profile.html" class="profile-link-navbar">
+                <span id="loggedInUsername">Hello, User!</span>
+                <i class="fas fa-user-circle icon-profile" aria-label="User Profile Icon"></i>
+                </a>
+            </div>
+        </header>
+
+        <div class="report-section">
+            <div class="page-header">
+                <h2>Data Laporan Barang</h2>
+            </div>
+
+            <div class="report-filters-card">
+                <h3>Filter Barang</h3>
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="filterBulanBarang">Pilih Bulan</label>
+                        <select id="filterBulanBarang" aria-label="Pilih Bulan untuk Filter Barang">
+                            <option value="">Semua Bulan</option>
+                            <option value="01">Januari</option>
+                            <option value="02">Februari</option>
+                            <option value="03">Maret</option>
+                            <option value="04">April</option>
+                            <option value="05">Mei</option>
+                            <option value="06">Juni</option>
+                            <option value="07">Juli</option>
+                            <option value="08">Agustus</option>
+                            <option value="09">September</option>
+                            <option value="10">Oktober</option>
+                            <option value="11">November</option>
+                            <option value="12">Desember</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="filterTahunBarang">Pilih Tahun</label>
+                        <select id="filterTahunBarang" aria-label="Pilih Tahun untuk Filter Barang">
+                            <option value="">Semua Tahun</option>
+                            <option value="2023">2023</option>
+                            <option value="2024">2024</option>
+                            <option value="2025">2025</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="btnCariBulanTahunBarang" class="sr-only">Tombol Cari Bulan/Tahun</label> <button class="btn btn-primary" id="btnCariBulanTahunBarang">Cari</button>
+                    </div>
+                </div>
+
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="filterTanggalBarang">Pilih Hari</label>
+                        <input type="date" id="filterTanggalBarang" aria-label="Pilih Tanggal untuk Filter Barang">
+                    </div>
+                    <div class="filter-group">
+                        <label for="btnCariTanggalBarang" class="sr-only">Tombol Cari Tanggal</label> <button class="btn btn-primary" id="btnCariTanggalBarang">Cari</button>
+                    </div>
+                </div>
+
+                <div class="search-download-row">
+                    <label for="searchBarang" class="sr-only">Cari Nama Barang/Kode Barang:</label>
+                    <input type="text" id="searchBarang" placeholder="Cari Nama Barang/Kode Barang:" aria-label="Cari Nama Barang atau Kode Barang">
+                    <button class="btn btn-success" id="btnDownloadBarang" aria-label="Download Laporan Barang"><i class="fas fa-download"></i> Download</button>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>ID Barang</th>
+                            <th>Kode Barang</th>
+                            <th>Nama Barang</th>
+                            <th>Stok</th>
+                            <th>Harga Modal</th>
+                            <th>Kategori</th>
+                            <th>Tanggal Dibuat</th>
+                            <th>Tanggal Diperbarui</th>
+                        </tr>
+                    </thead>
+                    <tbody id="barangTableBody">
+                        <tr><td colspan="9">Memuat data...</td></tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="4" style="text-align: right; font-weight: bold;">Total Stok:</td>
+                            <td style="font-weight: bold;"><span id="totalBarangUnik">0</span></td>
+                            <td colspan="4"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <div class="pagination">
+                <button id="prevPageBarang" aria-label="Halaman Sebelumnya">&laquo; Previous</button>
+                <span id="currentPageBarang" aria-live="polite">1</span>
+                <button id="nextPageBarang" aria-label="Halaman Berikutnya">Next &raquo;</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Memuat JavaScript setelah semua elemen HTML tersedia
+        document.addEventListener('DOMContentLoaded', () => {
+            // Untuk menampilkan username di header
+            const usernameSpan = document.getElementById('loggedInUsername');
+            const storedUsername = localStorage.getItem('loggedInUser');
+            if (storedUsername) {
+                usernameSpan.textContent = `Hello, ${storedUsername}!`;
+                const usernameSidebarSpan = document.getElementById('loggedInUsernameSidebar');
+                if (usernameSidebarSpan) {
+                    usernameSidebarSpan.textContent = storedUsername;
+                }
+            } else {
+                console.warn('Username not found in localStorage. Redirecting to login...');
+                window.location.href = '/login.html';
+            }
+
+            // === JavaScript untuk Sidebar (tanpa Hamburger Toggle) ===
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            // Menargetkan elemen <span> di dalam <a> dan <p> di sidebar
+            const menuLinksText = document.querySelectorAll('.sidebar .menu a, .profile-section p');
+
+            function toggleSidebarText(isVisible) {
+                menuLinksText.forEach(element => {
+                    const textContentElement = element.querySelector('span') || element;
+                    if (textContentElement) {
+                        textContentElement.style.opacity = isVisible ? '1' : '0';
+                        textContentElement.style.width = isVisible ? 'auto' : '0';
+                        textContentElement.style.overflow = isVisible ? 'visible' : 'hidden';
+                        textContentElement.style.whiteSpace = isVisible ? 'nowrap' : 'nowrap';
+                    }
+                });
+            }
+
+            function adjustLayoutOnLoad() {
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.add('sidebar-collapsed');
+                    mainContent.classList.add('main-content-expanded');
+                    toggleSidebarText(false);
+                } else {
+                    sidebar.classList.remove('sidebar-collapsed');
+                    mainContent.classList.remove('main-content-expanded');
+                    toggleSidebarText(true);
+                }
+            }
+
+            adjustLayoutOnLoad();
+            window.addEventListener('resize', adjustLayoutOnLoad);
+
+            // JavaScript untuk menandai menu aktif berdasarkan URL
+            const currentPath = window.location.pathname;
+            const menuLinks = document.querySelectorAll('.sidebar .menu li a');
+
+            menuLinks.forEach(link => {
+                link.parentElement.classList.remove('active');
+
+                const linkPath = link.getAttribute('href');
+                if (linkPath) {
+                    const fileNameFromLink = linkPath.split('/').pop();
+                    const currentFileName = currentPath.split('/').pop();
+
+                    if (fileNameFromLink === currentFileName) {
+                        link.parentElement.classList.add('active');
+                    } else if (currentFileName === '' && fileNameFromLink === 'dashboard.html') {
+                        link.parentElement.classList.add('active');
+                    }
+                }
+            });
+
+            // ========================================================
+            // === FUNGSI UNTUK MENGAMBIL DAN MENAMPILKAN DATA BARANG ===
+            // ========================================================
+            let currentBarangPage = 1;
+            const barangRowsPerPage = 10;
+            let allBarangData = []; // Untuk menyimpan semua data mentah dari API
+
+            // Fungsi utilitas untuk format Rupiah
+            function formatRupiah(angka) {
+                if (typeof angka !== 'number') {
+                    const num = parseFloat(angka);
+                    if (isNaN(num)) return 'Rp 0';
+                    angka = num;
+                }
+                const formatter = new Intl.NumberFormat('id-ID', {
+                    style: 'currency',
+                    currency: 'IDR',
+                    minimumFractionDigits: 0
+                });
+                return formatter.format(angka);
+            }
+
+            // Fungsi untuk menampilkan data barang ke tabel
+            function displayBarangTableData(dataToDisplay) {
+                const tableBody = document.getElementById('barangTableBody');
+                tableBody.innerHTML = ''; // Kosongkan tabel sebelum mengisi
+
+                // Pagiasi ambil data untuk halaman saat ini
+                const start = (currentBarangPage - 1) * barangRowsPerPage;
+                const end = start + barangRowsPerPage;
+                const paginatedData = dataToDisplay.slice(start, end);
+
+                // Calculate total stock from allBarangData
+                let totalStock = 0;
+                dataToDisplay.forEach(item => {
+                    totalStock += (item.stok_awal || 0); // Sum up stok_awal, default to 0 if null/undefined
+                });
+
+                if (paginatedData.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="9">Tidak ada data barang ditemukan.</td></tr>';
+                } else {
+                    paginatedData.forEach((item, index) => {
+                        const row = tableBody.insertRow();
+                        row.insertCell(0).textContent = start + index + 1; // No urut
+                        row.insertCell(1).textContent = item.id_barang || '-'; // id_barang dari database
+                        row.insertCell(2).textContent = item.kode_barang || '-';
+                        row.insertCell(3).textContent = item.nama_barang || '-';
+                        row.insertCell(4).textContent = item.stok_awal || 0;
+                        row.insertCell(5).textContent = formatRupiah(item.harga_modal || 0);
+                        row.insertCell(6).textContent = item.nama_kategori || 'Tidak Berkategori'; // Tampilkan nama kategori
+
+                        // Format Tanggal Dibuat
+                        let createdAt = item.created_at ? new Date(item.created_at) : null;
+                        row.insertCell(7).textContent = createdAt && !isNaN(createdAt.getTime()) ?
+                            createdAt.toLocaleString('id-ID', {
+                                year: 'numeric',
+                                month: '2-digit',
+                                day: '2-digit',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            }).replace(/\//g, '-') : '-';
+
+                        // Format Tanggal Diperbarui
+                        let updatedAt = item.updated_at ? new Date(item.updated_at) : null;
+                        row.insertCell(8).textContent = updatedAt && !isNaN(updatedAt.getTime()) ?
+                            updatedAt.toLocaleString('id-ID', {
+                                year: 'numeric',
+                                month: '2-digit',
+                                day: '2-digit',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            }).replace(/\//g, '-') : '-';
+                    });
+                }
+
+                // Update footer total barang unik (now total stock)
+                document.getElementById('totalBarangUnik').textContent = totalStock;
+
+                // Perbarui status tombol paginasi
+                updateBarangPaginationButtons(dataToDisplay.length);
+            }
+
+            /**
+             * Fungsi untuk mengupdate status tombol pagination barang.
+             * @param {number} totalRows - Total jumlah baris data barang yang difilter.
+             */
+            function updateBarangPaginationButtons(totalRows) {
+                const totalPages = Math.ceil(totalRows / barangRowsPerPage);
+                document.getElementById('prevPageBarang').disabled = currentBarangPage === 1;
+                document.getElementById('nextPageBarang').disabled = currentBarangPage === totalPages || totalPages === 0;
+                document.getElementById('currentPageBarang').textContent = currentBarangPage;
+            }
+
+            /**
+             * Fungsi utama untuk mengambil data barang dari API backend.
+             * Mengirim parameter pencarian dan filter ke backend.
+             */
+            async function fetchBarangData() {
+                const search = document.getElementById('searchBarang').value;
+                const filterBulan = document.getElementById('filterBulanBarang').value;
+                const filterTahun = document.getElementById('filterTahunBarang').value;
+                const filterTanggal = document.getElementById('filterTanggalBarang').value;
+
+                const username = localStorage.getItem('loggedInUser');
+
+                if (!username) {
+                    console.error('Username not found in localStorage. Cannot fetch data.');
+                    alert('Sesi Anda telah berakhir atau tidak ditemukan. Silakan login kembali.');
+                    window.location.href = '/login.html';
+                    return;
+                }
+
+                let url = '/api/barang';
+                const params = new URLSearchParams();
+
+                if (search) params.append('search', search);
+
+                if (filterBulan) params.append('bulan', filterBulan);
+                if (filterTahun) params.append('tahun', filterTahun);
+                if (filterTanggal) params.append('tanggal', filterTanggal);
+
+                if (params.toString()) {
+                    url += '?' + params.toString();
+                }
+
+                try {
+                    console.log('Fetching barang data from URL:', url);
+                    const response = await fetch(url, {
+                        headers: {
+                            'X-Username': username
+                        }
+                    });
+
+                    if (!response.ok) {
+                        if (response.status === 401) {
+                            alert('Sesi Anda telah berakhir. Silakan login kembali.');
+                            window.location.href = '/login.html';
+                        }
+                        const errorText = await response.text();
+                        throw new Error(`HTTP error! status: ${response.status}, ${errorText}`);
+                    }
+                    allBarangData = await response.json();
+
+                    currentBarangPage = 1;
+                    displayBarangTableData(allBarangData);
+
+                } catch (error) {
+                    console.error('Error fetching or displaying barang data:', error);
+                    document.getElementById('barangTableBody').innerHTML = '<tr><td colspan="9">Gagal memuat data barang. Pastikan server berjalan dan API benar.</td></tr>';
+                    document.getElementById('totalBarangUnik').textContent = '0';
+                    updateBarangPaginationButtons(0);
+                }
+            }
+
+            // ========================================================
+            // === EVENT LISTENERS UNTUK FILTER DAN PAGINASI BARANG ===
+            // ========================================================
+
+            document.getElementById('btnCariBulanTahunBarang').addEventListener('click', () => {
+                document.getElementById('filterTanggalBarang').value = '';
+                fetchBarangData();
+            });
+
+            document.getElementById('btnCariTanggalBarang').addEventListener('click', () => {
+                document.getElementById('filterBulanBarang').value = '';
+                document.getElementById('filterTahunBarang').value = '';
+                fetchBarangData();
+            });
+
+            document.getElementById('searchBarang').addEventListener('keyup', (event) => {
+                if (event.key === 'Enter' || event.target.value === '') {
+                    fetchBarangData();
+                }
+            });
+
+            document.getElementById('filterBulanBarang').addEventListener('change', () => {
+                document.getElementById('filterTanggalBarang').value = '';
+                fetchBarangData();
+            });
+            document.getElementById('filterTahunBarang').addEventListener('change', () => {
+                document.getElementById('filterTanggalBarang').value = '';
+                fetchBarangData();
+            });
+            document.getElementById('filterTanggalBarang').addEventListener('change', () => {
+                document.getElementById('filterBulanBarang').value = '';
+                document.getElementById('filterTahunBarang').value = '';
+                fetchBarangData();
+            });
+
+            document.getElementById('prevPageBarang').addEventListener('click', () => {
+                if (currentBarangPage > 1) {
+                    currentBarangPage--;
+                    displayBarangTableData(allBarangData);
+                }
+            });
+
+            document.getElementById('nextPageBarang').addEventListener('click', () => {
+                const totalPages = Math.ceil(allBarangData.length / barangRowsPerPage);
+                if (currentBarangPage < totalPages) {
+                    currentBarangPage++;
+                    displayBarangTableData(allBarangData);
+                }
+            });
+
+            fetchBarangData();
+
+            document.getElementById('btnDownloadBarang').addEventListener('click', () => {
+                const search = document.getElementById('searchBarang').value;
+                const username = localStorage.getItem('loggedInUser');
+                const filterBulan = document.getElementById('filterBulanBarang').value;
+                const filterTahun = document.getElementById('filterTahunBarang').value;
+                const filterTanggal = document.getElementById('filterTanggalBarang').value;
+
+                if (!username) {
+                    alert('Sesi Anda telah berakhir atau tidak ditemukan. Silakan login kembali.');
+                    window.location.href = '/login.html';
+                    return;
+                }
+
+                let downloadUrl = '/api/barang/download?';
+
+                const params = new URLSearchParams();
+                if (search) params.append('search', search);
+                if (filterBulan) params.append('bulan', filterBulan);
+                if (filterTahun) params.append('tahun', filterTahun);
+                if (filterTanggal) params.append('tanggal', filterTanggal);
+                params.append('x-username', username);
+
+                downloadUrl += params.toString();
+                window.location.href = downloadUrl;
+            });
+
+            console.log('Laporan Barang loaded!');
+        });
+    </script>
+</body>
+</html>

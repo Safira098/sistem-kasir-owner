@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading...</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #2196F3; /* Warna biru yang mirip dengan gambar */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            flex-direction: column; /* Untuk menata elemen secara vertikal */
+        }
+
+        .loading-content {
+            text-align: center;
+            color: white;
+        }
+
+        .loading-icon img {
+            width: 150px; /* Ukuran ikon SmartTill */
+            height: auto;
+            margin-bottom: 20px;
+        }
+
+        .loading-text {
+            font-size: 28px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-content">
+        <div class="loading-icon">
+            <img src="img/logo.png" alt="SmartTill Logo">
+        </div>
+        <div class="loading-text">SmartTill</div>
+    </div>
+
+    <script>
+        setTimeout(() => {
+        window.location.href = 'dashboard.html'; // Redirect ke halaman utama setelah loading
+        }, 3000); // Redirect setelah 3 detik
+    </script>
+</body>
+</html>

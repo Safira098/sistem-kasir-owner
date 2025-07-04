@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan Pembelian - SmartTill</title>
+    <link rel="stylesheet" href="style_dashboard.css">
+    <link rel="stylesheet" href="style_pembelian.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body class="laporan-pembelian-page">
+    <div id="sidebar" class="sidebar">
+        <div class="profile-section">
+            <a href="profile.html" class="profile-link-sidebar">
+            <div class="profile-icon"><i class="fas fa-user"></i></div>
+            <p><span id="loggedInUsernameSidebar">Profile</span></p>
+            </a>
+        </div>
+        <ul class="menu">
+            <li><a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+            <li><a href="laporan_penjualan.html"><i class="fas fa-chart-line"></i> Laporan Penjualan</a></li>
+            <li class="active"><a href="laporan_pembelian.html"><i class="fas fa-shopping-basket"></i> Laporan Pembelian</a></li>
+            <li><a href="laporan_barang.html"><i class="fas fa-boxes"></i> Laporan Barang</a></li>
+            <li><a href="laporan_keuangan.html"><i class="fas fa-wallet"></i> Laporan Keuangan</a></li>
+        </ul>
+    </div>
+
+    <div id="mainContent" class="main-content">
+        <header class="navbar">
+            <div class="navbar-left">
+                <div class="app-title">SmartTill</div>
+            </div>
+            <div class="user-profile">
+                <a href="profile.html" class="profile-link-navbar">
+                <span id="loggedInUsername">Hello, User!</span>
+                <i class="fas fa-user-circle icon-profile"></i>
+                </a>
+            </div>
+        </header>
+
+        <div class="report-section">
+            <div class="page-header">
+                <h2>Data Laporan Pembelian</h2>
+            </div>
+
+            <div class="report-filters-card">
+                <h3>Filter Laporan</h3>
+
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="filterBulan">Pilih Bulan</label>
+                        <select id="filterBulan">
+                            <option value="">Semua Bulan</option>
+                            <option value="01">Januari</option>
+                            <option value="02">Februari</option>
+                            <option value="03">Maret</option>
+                            <option value="04">April</option>
+                            <option value="05">Mei</option>
+                            <option value="06">Juni</option>
+                            <option value="07">Juli</option>
+                            <option value="08">Agustus</option>
+                            <option value="09">September</option>
+                            <option value="10">Oktober</option>
+                            <option value="11">November</option>
+                            <option value="12">Desember</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="filterTahun">Pilih Tahun</label>
+                        <select id="filterTahun">
+                            <option value="">Semua Tahun</option>
+                            <option value="2023">2023</option>
+                            <option value="2024">2024</option>
+                            <option value="2025">2025</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>&nbsp;</label>
+                        <button class="btn btn-primary" id="btnCariBulanTahun">Cari</button>
+                    </div>
+                </div>
+
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="filterTanggal">Pilih Hari</label>
+                        <input type="date" id="filterTanggal">
+                    </div>
+                    <div class="filter-group">
+                        <label>&nbsp;</label>
+                        <button class="btn btn-primary" id="btnCariTanggal">Cari</button>
+                    </div>
+                </div>
+
+                <div class="search-download-row">
+                    <input type="text" id="searchBarangPembelian" placeholder="Cari Nama Barang/ID Pembelian/Supplier:">
+                    <button class="btn btn-success" id="btnDownload"><i class="fas fa-download"></i> Download</button>
+                </div>
+            </div>
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>ID Pembelian</th>
+                            <th>Supplier</th>
+                            <th>ID Barang</th>
+                            <th>Nama Barang</th>
+                            <th>Jumlah</th>
+                            <th>Harga Beli</th>
+                            <th>Total Pembelian</th>
+                            <th>Tanggal Pembelian</th>
+                            <th>Status Pembelian</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pembelianTableBody">
+                        <!-- Data akan diisi oleh JavaScript -->
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="7">Total Seluruh Pengeluaran Pembelian:</td>
+                            <td id="totalPengeluaran" colspan="3">Rp 0</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <div class="pagination">
+                <button id="prevPage">&laquo; Previous</button>
+                <span id="currentPage">1</span>
+                <button id="nextPage">Next &raquo;</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Untuk menampilkan username di header
+            const usernameSpan = document.getElementById('loggedInUsername');
+            const storedUsername = localStorage.getItem('loggedInUser');
+            if (storedUsername) {
+                usernameSpan.textContent = `Hello, ${storedUsername}!`;
+                const usernameSidebarSpan = document.getElementById('loggedInUsernameSidebar');
+                if (usernameSidebarSpan) {
+                    usernameSidebarSpan.textContent = storedUsername;
+                }
+            } else {
+                console.warn('Username not found in localStorage. Redirecting to login...');
+                window.location.href = '/login.html'; // Redirect ke halaman login jika tidak ada username
+            }
+
+            // === JavaScript untuk Sidebar (tanpa Hamburger Toggle) ===
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+
+            function adjustLayoutOnLoad() {
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.add('sidebar-collapsed');
+                    mainContent.classList.add('main-content-expanded');
+                } else {
+                    sidebar.classList.remove('sidebar-collapsed');
+                    mainContent.classList.remove('main-content-expanded');
+                }
+            }
+
+            adjustLayoutOnLoad();
+            window.addEventListener('resize', adjustLayoutOnLoad);
+
+            // JavaScript untuk menandai menu aktif berdasarkan URL
+            const currentPath = window.location.pathname;
+            const menuLinks = document.querySelectorAll('.sidebar .menu li a');
+
+            menuLinks.forEach(link => {
+                link.parentElement.classList.remove('active');
+                const linkPath = link.getAttribute('href');
+                if (linkPath && currentPath.includes(linkPath)) {
+                    link.parentElement.classList.add('active');
+                }
+            });
+
+            // =========================================================
+            // === LOGIKA UNTUK LAPORAN PEMBELIAN ===
+            // =========================================================
+            let currentPembelianPage = 1;
+            const pembelianRowsPerPage = 10;
+            let allPembelianData = []; // Untuk menyimpan semua data mentah dari API (setelah filter)
+
+            // Fungsi utilitas untuk format Rupiah
+            function formatRupiah(angka) {
+                if (typeof angka !== 'number') {
+                    const num = parseFloat(angka);
+                    if (isNaN(num)) {
+                        console.warn('Invalid number for Rupiah formatting:', angka);
+                        return 'Rp 0';
+                    }
+                    angka = num;
+                }
+                const formatter = new Intl.NumberFormat('id-ID', {
+                    style: 'currency',
+                    currency: 'IDR',
+                    minimumFractionDigits: 0
+                });
+                return formatter.format(angka);
+            }
+
+            // Fungsi untuk menampilkan data ke tabel
+            function displayPembelianTableData(dataToDisplay) {
+                const tableBody = document.getElementById('pembelianTableBody');
+                tableBody.innerHTML = ''; // Kosongkan tabel sebelum mengisi
+
+                let totalPengeluaranKeseluruhan = 0;
+
+                // HITUNG TOTAL DARI SELURUH DATA YANG DIFILTER (dataToDisplay)
+                dataToDisplay.forEach(item => {
+                    // Pastikan nilai di-parse sebagai float sebelum penjumlahan
+                    const totalPembelianItem = parseFloat(item.total_pembelian_item) || 0;
+                    totalPengeluaranKeseluruhan += totalPembelianItem;
+                });
+
+                // Paginasi: Ambil data untuk halaman saat ini
+                const start = (currentPembelianPage - 1) * pembelianRowsPerPage;
+                const end = start + pembelianRowsPerPage;
+                const paginatedData = dataToDisplay.slice(start, end);
+
+                if (paginatedData.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="10">Tidak ada data pembelian ditemukan.</td></tr>';
+                } else {
+                    paginatedData.forEach((item, index) => {
+                        const row = tableBody.insertRow();
+                        row.insertCell(0).textContent = start + index + 1; // No urut
+                        row.insertCell(1).textContent = item.id_pembelian || '-';
+                        row.insertCell(2).textContent = item.supplier_name || '-'; // Nama Supplier
+                        row.insertCell(3).textContent = item.id_barang || '-';
+                        row.insertCell(4).textContent = item.nama_barang || '-'; // Nama Barang
+                        row.insertCell(5).textContent = item.jumlah || 0;
+                        row.insertCell(6).textContent = formatRupiah(item.harga_beli_satuan || 0);
+                        row.insertCell(7).textContent = formatRupiah(item.total_pembelian_item || 0); // Total Pembelian Item
+
+                        let tanggalPembelian = new Date(item.tanggal_pembelian);
+                        if (isNaN(tanggalPembelian.getTime())) {
+                            tanggalPembelian = '';
+                        } else {
+                            tanggalPembelian = tanggalPembelian.toLocaleString('id-ID', {
+                                year: 'numeric',
+                                month: '2-digit',
+                                day: '2-digit',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            }).replace(/\//g, '-').replace(',', '');
+                        }
+                        row.insertCell(8).textContent = tanggalPembelian;
+                        row.insertCell(9).textContent = item.status_pembelian || '-';
+                    });
+                }
+
+                // Update footer tabel dengan total keseluruhan
+                document.getElementById('totalPengeluaran').textContent = formatRupiah(totalPengeluaranKeseluruhan);
+
+                // Perbarui status tombol paginasi
+                updatePembelianPaginationButtons(dataToDisplay.length);
+            }
+
+            // Fungsi untuk mengupdate tombol pagination
+            function updatePembelianPaginationButtons(totalRows) {
+                const totalPages = Math.ceil(totalRows / pembelianRowsPerPage);
+                document.getElementById('prevPage').disabled = currentPembelianPage === 1;
+                document.getElementById('nextPage').disabled = currentPembelianPage === totalPages || totalPages === 0;
+                document.getElementById('currentPage').textContent = currentPembelianPage;
+            }
+
+            // Fungsi untuk mengambil data pembelian dari API
+            async function fetchPembelianData() {
+                const bulan = document.getElementById('filterBulan').value;
+                const tahun = document.getElementById('filterTahun').value;
+                const tanggal = document.getElementById('filterTanggal').value;
+                const search = document.getElementById('searchBarangPembelian').value;
+                const username = localStorage.getItem('loggedInUser');
+
+                if (!username) {
+                    console.error('Username not found in localStorage. Cannot fetch data.');
+                    alert('Sesi Anda telah berakhir atau tidak ditemukan. Silakan login kembali.');
+                    window.location.href = '/login.html';
+                    return;
+                }
+
+                let url = '/api/pembelian';
+                const params = new URLSearchParams();
+                if (bulan) params.append('bulan', bulan);
+                if (tahun) params.append('tahun', tahun);
+                if (tanggal) params.append('tanggal', tanggal);
+                if (search) params.append('search', search);
+
+                if (params.toString()) {
+                    url += '?' + params.toString();
+                }
+
+                try {
+                    console.log('Fetching pembelian data from URL:', url);
+                    const response = await fetch(url, {
+                        headers: {
+                            'X-Username': username
+                        }
+                    });
+
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        console.error(`HTTP error! Status: ${response.status}. Response from server:`, errorText);
+                        if (response.status === 401) {
+                            alert('Sesi Anda telah berakhir. Silakan login kembali.');
+                            window.location.href = '/login.html';
+                        }
+                        throw new Error(`Gagal memuat data pembelian. Status: ${response.status}. Pesan: ${errorText}`);
+                    }
+
+                    allPembelianData = await response.json();
+                    console.log('Data Pembelian Diterima:', allPembelianData);
+
+                    currentPembelianPage = 1;
+                    displayPembelianTableData(allPembelianData);
+
+                } catch (error) {
+                    console.error('Error in fetchPembelianData:', error);
+                    document.getElementById('pembelianTableBody').innerHTML = '<tr><td colspan="10">Gagal memuat data pembelian. Silakan periksa konsol browser dan server log untuk detail error.</td></tr>';
+                    document.getElementById('totalPengeluaran').textContent = formatRupiah(0);
+                    updatePembelianPaginationButtons(0);
+                }
+            }
+
+            // =========================================================
+            // === EVENT LISTENERS UNTUK FILTER DAN PAGINASI ===
+            // =========================================================
+
+            document.getElementById('btnCariBulanTahun').addEventListener('click', () => {
+                document.getElementById('filterTanggal').value = '';
+                fetchPembelianData();
+            });
+
+            document.getElementById('btnCariTanggal').addEventListener('click', () => {
+                document.getElementById('filterBulan').value = '';
+                document.getElementById('filterTahun').value = '';
+                fetchPembelianData();
+            });
+
+            document.getElementById('searchBarangPembelian').addEventListener('keyup', (event) => {
+                if (event.key === 'Enter' || event.target.value === '') {
+                    fetchPembelianData();
+                }
+            });
+
+            document.getElementById('prevPage').addEventListener('click', () => {
+                if (currentPembelianPage > 1) {
+                    currentPembelianPage--;
+                    displayPembelianTableData(allPembelianData);
+                }
+            });
+
+            document.getElementById('nextPage').addEventListener('click', () => {
+                const totalPages = Math.ceil(allPembelianData.length / pembelianRowsPerPage);
+                if (currentPembelianPage < totalPages) {
+                    currentPembelianPage++;
+                    displayPembelianTableData(allPembelianData);
+                }
+            });
+
+            fetchPembelianData();
+
+            document.getElementById('btnDownload').addEventListener('click', () => {
+                const bulan = document.getElementById('filterBulan').value;
+                const tahun = document.getElementById('filterTahun').value;
+                const tanggal = document.getElementById('filterTanggal').value;
+                const search = document.getElementById('searchBarangPembelian').value;
+                const username = localStorage.getItem('loggedInUser');
+
+                if (!username) {
+                    alert('Sesi Anda telah berakhir atau tidak ditemukan. Silakan login kembali.');
+                    window.location.href = '/login.html';
+                    return;
+                }
+
+                let downloadUrl = '/api/pembelian/download?';
+
+                const params = new URLSearchParams();
+                if (bulan) params.append('bulan', bulan);
+                if (tahun) params.append('tahun', tahun);
+                if (tanggal) params.append('tanggal', tanggal);
+                if (search) params.append('search', search);
+
+                params.append('x-username', username);
+
+                downloadUrl += params.toString();
+                window.location.href = downloadUrl;
+            });
+
+            console.log('Laporan Pembelian loaded!');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        /* ... CSS Anda yang sudah ada ... */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #2196F3; /* Warna biru yang mirip dengan gambar */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .login-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 350px;
+            text-align: center;
+        }
+
+        .login-container h2 {
+            margin-bottom: 25px;
+            color: #333;
+            font-size: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: calc(100% - 20px); /* Adjust for padding */
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .form-group .password-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-group .password-wrapper input {
+            flex-grow: 1;
+            padding-right: 40px; /* Space for the eye icon */
+        }
+
+        .form-group .password-wrapper .toggle-password {
+            position: absolute;
+            right: 10px;
+            cursor: pointer;
+            color: #888;
+            font-size: 18px;
+            user-select: none; /* Prevent text selection */
+        }
+
+        .login-button {
+            background-color: #007BFF; /* Warna biru untuk tombol */
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin-top: 15px;
+            transition: background-color 0.3s ease;
+        }
+
+        .login-button:hover {
+            background-color: #0056b3;
+        }
+
+        .signup-link {
+            margin-top: 25px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .signup-link a {
+            color: #007BFF;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .signup-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>Login</h2>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="userID">User ID</label>
+                <input type="text" id="userID" name="userID" placeholder="User ID" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div class="password-wrapper">
+                    <input type="password" id="password" name="password" placeholder="Password" required>
+                    <span class="toggle-password" onclick="togglePasswordVisibility()">👁️</span>
+                </div>
+            </div>
+            <button type="submit" class="login-button">Masuk</button>
+        </form>
+        <div class="signup-link">
+            Belum mempunyai akun? <a href="register.html">Daftar sekarang</a>
+        </div>
+    </div>
+
+    <script>
+        function togglePasswordVisibility() {
+            const passwordField = document.getElementById('password');
+            const toggleIcon = document.querySelector('.toggle-password');
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                toggleIcon.textContent = '🔒'; // Or another icon for "hide"
+            } else {
+                passwordField.type = 'password';
+                toggleIcon.textContent = '👁️'; // Or another icon for "show"
+            }
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', async function(event) {
+            event.preventDefault(); // Mencegah form dari submit secara default
+
+            const userID = document.getElementById('userID').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch('/api/login', { // Endpoint backend Anda untuk login
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ userID, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    console.log('Login successful:', data);
+                    
+                    // --- PENTING: Bagian ini harus ada untuk menyimpan username ---
+                    if (data.user && data.user.userID) {
+                        localStorage.setItem('loggedInUser', data.user.userID); 
+                    } else {
+                        console.warn('Username not found in login response. Dashboard might show default "Hello, User!".');
+                    }
+        
+                    // --- PENTING: Redirect langsung ke dashboard.html ---
+                    if (data.redirectTo) {
+                        window.location.href = data.redirectTo; // Mengarahkan ke 'dashboard.html'
+                    } else {
+                        // Fallback jika 'redirectTo' tidak ada (seharusnya tidak terjadi jika backend benar)
+                        window.location.href = 'dashboard.html'; 
+                    }
+                    // --- AKHIR BAGIAN PENTING ---
+
+                } else {
+                    console.error('Login failed:', data.message);
+                    alert('Login gagal: ' + (data.message || 'Terjadi kesalahan.'));
+                }
+            } catch (error) {
+                console.error('Error during login:', error);
+                alert('Terjadi kesalahan saat menghubungi server.');
+            }
+        });
+    </script>
+</body>
+</html>

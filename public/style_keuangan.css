@@ -1,0 +1,298 @@
+/* ================================================= */
+/* === STYLING KHUSUS UNTUK laporan_keuangan.html  === */
+/* ================================================= */
+
+.laporan-keuangan-page .report-section {
+    background-color: #fff;
+    padding: 12px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+}
+
+.laporan-keuangan-page .page-header {
+    margin-bottom: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: transparent;
+    box-shadow: none;
+    border-radius: 0;
+}
+
+.laporan-keuangan-page .page-header h2 {
+    margin: 0;
+    color: #343a40;
+    font-size: 1.5em;
+    font-weight: 600;
+}
+
+.laporan-keuangan-page .report-filters-card {
+    background-color: #ffffff;
+    padding: 12px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    margin-bottom: 12px;
+}
+
+.laporan-keuangan-page .report-filters-card h3 {
+    margin-top: 0;
+    margin-bottom: 12px;
+    color: #333;
+    font-size: 1.05em;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 6px;
+}
+
+.laporan-keuangan-page .filter-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 8px;
+    align-items: flex-end;
+}
+
+.laporan-keuangan-page .filter-group {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    min-width: 100px;
+}
+
+.laporan-keuangan-page .filter-group label {
+    margin-bottom: 2px;
+    font-weight: 500;
+    color: #555;
+    font-size: 0.8em;
+}
+
+.laporan-keuangan-page .filter-group select,
+.laporan-keuangan-page .filter-group input[type="date"] {
+    padding: 6px 8px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 0.85em;
+    background-color: #fcfcfc;
+    color: #333;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.laporan-keuangan-page .filter-group input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(30%) sepia(85%) saturate(2250%) hue-rotate(200deg) brightness(95%) contrast(90%);
+}
+
+.laporan-keuangan-page .btn {
+    padding: 7px 12px;
+    border: none;
+    border-radius: 5px;
+    font-size: 0.85em;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    white-space: nowrap;
+}
+
+.laporan-keuangan-page .btn-primary {
+    background-color: #2196F3;
+    color: white;
+}
+
+.laporan-keuangan-page .btn-primary:hover {
+    background-color: #1976D2;
+    transform: translateY(-1px);
+}
+
+.laporan-keuangan-page .btn-success {
+    background-color: #4CAF50;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.laporan-keuangan-page .btn-success:hover {
+    background-color: #388E3C;
+    transform: translateY(-1px);
+}
+
+.laporan-keuangan-page .search-download-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+    align-items: center;
+}
+
+.laporan-keuangan-page #searchKeuangan {
+    flex-grow: 1;
+    padding: 6px 8px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 0.85em;
+    min-width: 150px;
+    box-sizing: border-box;
+}
+
+.laporan-keuangan-page .table-container {
+    overflow-x: auto;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    padding: 12px;
+}
+
+.laporan-keuangan-page .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 6px;
+    font-size: 0.85em;
+    min-width: 700px; /* Sesuaikan lebar minimum jika banyak kolom */
+}
+
+.laporan-keuangan-page .data-table thead tr {
+    background-color: #f2f2f2;
+}
+
+.laporan-keuangan-page .data-table th,
+.laporan-keuangan-page .data-table td {
+    border: 1px solid #ddd;
+    padding: 8px 10px;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.laporan-keuangan-page .data-table th {
+    font-weight: 600;
+    color: #555;
+    text-transform: capitalize;
+}
+
+.laporan-keuangan-page .data-table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.laporan-keuangan-page .data-table tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+.laporan-keuangan-page .data-table tfoot td {
+    font-weight: bold;
+    background-color: #e6f5ff;
+    padding: 8px 10px;
+    border-top: 2px solid #2196F3;
+}
+
+.laporan-keuangan-page .data-table tfoot td:nth-child(2) { /* Untuk total keuntungan bersih */
+    background-color: #d4edda;
+    color: #155724;
+    text-align: right;
+}
+/* Penyesuaian untuk footer agar kolom total uang masuk/keluar sejajar */
+.laporan-keuangan-page .data-table tfoot tr:nth-child(1) td:nth-child(2),
+.laporan-keuangan-page .data-table tfoot tr:nth-child(2) td:nth-child(2),
+.laporan-keuangan-page .data-table tfoot tr:nth-child(3) td:nth-child(2) {
+    text-align: left; /* Biarkan teks "Rp 0" sejajar kiri di kolomnya */
+    background-color: #e6f5ff; /* Warna latar belakang sama */
+    color: #333; /* Warna teks normal */
+}
+
+
+.laporan-keuangan-page .pagination {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 12px;
+    gap: 6px;
+}
+
+.laporan-keuangan-page .pagination button {
+    background-color: #2196F3;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 0.85em;
+}
+
+.laporan-keuangan-page .pagination button:hover:not(:disabled) {
+    background-color: #1976D2;
+}
+
+.laporan-keuangan-page .pagination button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.laporan-keuangan-page .pagination span#currentPage {
+    font-weight: bold;
+    padding: 0 6px;
+    font-size: 0.85em;
+}
+
+/* Media Queries untuk Laporan Keuangan (Penyesuaian lebih agresif untuk mobile) */
+@media (max-width: 768px) {
+    .laporan-keuangan-page .page-header h2 {
+        font-size: 1.3em;
+    }
+    .laporan-keuangan-page .report-filters-card h3 {
+        font-size: 0.95em;
+    }
+    .laporan-keuangan-page .filter-group label,
+    .laporan-keuangan-page .filter-group select,
+    .laporan-keuangan-page .filter-group input[type="date"],
+    .laporan-keuangan-page #searchKeuangan,
+    .laporan-keuangan-page .btn,
+    .laporan-keuangan-page .pagination button,
+    .laporan-keuangan-page .pagination span#currentPage {
+        font-size: 0.75em;
+        padding: 5px 7px;
+    }
+
+    .laporan-keuangan-page .filter-row {
+        gap: 6px;
+    }
+    .laporan-keuangan-page .search-download-row {
+        gap: 6px;
+    }
+
+    .laporan-keuangan-page .data-table th,
+    .laporan-keuangan-page .data-table td {
+        padding: 6px 8px;
+        font-size: 0.8em;
+    }
+
+    .laporan-keuangan-page .data-table {
+        min-width: 550px; /* Sesuaikan agar tetap bisa discroll */
+    }
+
+    .laporan-keuangan-page .table-container {
+        padding: 6px;
+    }
+
+    .laporan-keuangan-page .pagination {
+        justify-content: center;
+        gap: 4px;
+    }
+}
+
+/* Tambahan: Untuk layar yang sangat kecil (misal: portrait mobile kecil) */
+@media (max-width: 480px) {
+    .laporan-keuangan-page .data-table {
+        min-width: 400px; /* Sesuaikan lagi jika perlu */
+    }
+    .laporan-keuangan-page .data-table th,
+    .laporan-keuangan-page .data-table td {
+        padding: 5px 7px;
+        font-size: 0.75em;
+    }
+    .laporan-keuangan-page .filter-group select,
+    .laporan-keuangan-page .filter-group input[type="date"],
+    .laporan-keuangan-page #searchKeuangan,
+    .laporan-keuangan-page .btn {
+        padding: 4px 6px;
+        font-size: 0.7em;
+    }
+}

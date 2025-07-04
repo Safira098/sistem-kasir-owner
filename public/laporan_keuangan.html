@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan Keuangan - SmartTill</title>
+    <link rel="stylesheet" href="style_dashboard.css">
+    <link rel="stylesheet" href="style_keuangan.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body class="laporan-keuangan-page">
+    <div id="sidebar" class="sidebar">
+        <div class="profile-section">
+            <a href="profile.html" class="profile-link-sidebar">
+            <div class="profile-icon"><i class="fas fa-user"></i></div>
+            <p><span id="loggedInUsernameSidebar">Profile</span></p>
+            </a>
+        </div>
+        <ul class="menu">
+            <li><a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+            <li><a href="laporan_penjualan.html"><i class="fas fa-chart-line"></i> Laporan Penjualan</a></li>
+            <li><a href="laporan_pembelian.html"><i class="fas fa-shopping-basket"></i> Laporan Pembelian</a></li>
+            <li><a href="laporan_barang.html"><i class="fas fa-boxes"></i> Laporan Barang</a></li>
+            <li class="active"><a href="laporan_keuangan.html"><i class="fas fa-wallet"></i> Laporan Keuangan</a></li>
+        </ul>
+    </div>
+
+    <div id="mainContent" class="main-content">
+        <header class="navbar">
+            <div class="navbar-left">
+                <div class="app-title">SmartTill</div>
+            </div>
+            <div class="user-profile">
+                <a href="profile.html" class="profile-link-navbar">
+                <span id="loggedInUsername">Hello, User!</span>
+                <i class="fas fa-user-circle icon-profile"></i>
+                </a>
+            </div>
+        </header>
+
+        <div class="report-section">
+            <div class="page-header">
+                <h2>Data Laporan Keuangan</h2>
+            </div>
+
+            <div class="report-filters-card">
+                <h3>Filter Laporan</h3>
+
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="filterBulan">Pilih Bulan</label>
+                        <select id="filterBulan">
+                            <option value="">Semua Bulan</option>
+                            <option value="01">Januari</option>
+                            <option value="02">Februari</option>
+                            <option value="03">Maret</option>
+                            <option value="04">April</option>
+                            <option value="05">Mei</option>
+                            <option value="06">Juni</option>
+                            <option value="07">Juli</option>
+                            <option value="08">Agustus</option>
+                            <option value="09">September</option>
+                            <option value="10">Oktober</option>
+                            <option value="11">November</option>
+                            <option value="12">Desember</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="filterTahun">Pilih Tahun</label>
+                        <select id="filterTahun">
+                            <option value="">Semua Tahun</option>
+                            <option value="2023">2023</option>
+                            <option value="2024">2024</option>
+                            <option value="2025">2025</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>&nbsp;</label>
+                        <button class="btn btn-primary" id="btnCariBulanTahun">Cari</button>
+                    </div>
+                </div>
+
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="filterTanggal">Pilih Hari</label>
+                        <input type="date" id="filterTanggal">
+                    </div>
+                    <div class="filter-group">
+                        <label>&nbsp;</label>
+                        <button class="btn btn-primary" id="btnCariTanggal">Cari</button>
+                    </div>
+                </div>
+
+                <div class="search-download-row">
+                    <input type="text" id="searchKeuangan" placeholder="Cari Deskripsi/Tipe Transaksi:">
+                    <button class="btn btn-success" id="btnDownload"><i class="fas fa-download"></i> Download</button>
+                </div>
+            </div>
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Tanggal Transaksi</th>
+                            <th>Deskripsi</th>
+                            <th>Tipe</th>
+                            <th>Metode Pembayaran</th>
+                            <th>Uang Masuk</th>
+                            <th>Uang Keluar</th>
+                            <th>Total Keuntungan</th>
+                        </tr>
+                    </thead>
+                    <tbody id="keuanganTableBody">
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="5">Total Uang Masuk:</td>
+                            <td id="totalUangMasuk">Rp 0</td>
+                            <td colspan="1"></td>
+                            <td colspan="1"></td>
+                        </tr>
+                        <tr>
+                            <td colspan="6">Total Uang Keluar:</td>
+                            <td id="totalUangKeluar">Rp 0</td>
+                            <td colspan="1"></td>
+                        </tr>
+                        <tr>
+                            <td colspan="7">Total Keuntungan Bersih:</td>
+                            <td id="totalKeuntunganBersih">Rp 0</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <div class="pagination">
+                <button id="prevPage">&laquo; Previous</button>
+                <span id="currentPage">1</span>
+                <button id="nextPage">Next &raquo;</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Untuk menampilkan username di header
+            const usernameSpan = document.getElementById('loggedInUsername');
+            const storedUsername = localStorage.getItem('loggedInUser');
+            if (storedUsername) {
+                usernameSpan.textContent = `Hello, ${storedUsername}!`;
+                const usernameSidebarSpan = document.getElementById('loggedInUsernameSidebar');
+                if (usernameSidebarSpan) {
+                    usernameSidebarSpan.textContent = storedUsername;
+                }
+            } else {
+                console.warn('Username not found in localStorage. Redirecting to login...');
+                window.location.href = '/login.html'; // Redirect ke halaman login jika tidak ada username
+            }
+
+            // === JavaScript untuk Sidebar (tanpa Hamburger Toggle) ===
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            const menuLinksText = document.querySelectorAll('.sidebar .menu a span, .profile-section p span');
+
+            function toggleSidebarText(isVisible) {
+                menuLinksText.forEach(span => {
+                    span.style.opacity = isVisible ? '1' : '0';
+                    span.style.width = isVisible ? 'auto' : '0';
+                });
+            }
+
+            function adjustLayoutOnLoad() {
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.add('sidebar-collapsed');
+                    mainContent.classList.add('main-content-expanded');
+                    toggleSidebarText(false);
+                } else {
+                    sidebar.classList.remove('sidebar-collapsed');
+                    mainContent.classList.remove('main-content-expanded');
+                    toggleSidebarText(true); 
+                }
+            }
+
+            adjustLayoutOnLoad();
+            window.addEventListener('resize', adjustLayoutOnLoad);
+
+            // JavaScript untuk menandai menu aktif berdasarkan URL
+            const currentPath = window.location.pathname;
+            const menuLinks = document.querySelectorAll('.sidebar .menu li a');
+
+            menuLinks.forEach(link => {
+                link.parentElement.classList.remove('active');
+                const linkPath = link.getAttribute('href');
+                if (linkPath && currentPath.includes(linkPath)) {
+                    link.parentElement.classList.add('active');
+                }
+            });
+
+            // =========================================================
+            // === LOGIKA UNTUK LAPORAN KEUANGAN ===
+            // =========================================================
+            let currentKeuanganPage = 1;
+            const keuanganRowsPerPage = 10;
+            let allKeuanganData = []; // Untuk menyimpan semua data mentah dari API (setelah filter)
+
+            // Fungsi utilitas untuk format Rupiah
+            function formatRupiah(angka) {
+                if (typeof angka !== 'number') {
+                    const num = parseFloat(angka);
+                    if (isNaN(num)) {
+                        console.warn('Invalid number for Rupiah formatting:', angka);
+                        return 'Rp 0';
+                    }
+                    angka = num;
+                }
+                const formatter = new Intl.NumberFormat('id-ID', {
+                    style: 'currency',
+                    currency: 'IDR',
+                    minimumFractionDigits: 0
+                });
+                return formatter.format(angka);
+            }
+
+            // Fungsi untuk menampilkan data ke tabel
+            function displayKeuanganTableData(dataToDisplay) { // Mengubah nama fungsi
+                const tableBody = document.getElementById('keuanganTableBody');
+                tableBody.innerHTML = ''; // Kosongkan tabel sebelum mengisi
+
+                let totalUangMasukKeseluruhan = 0;
+                let totalUangKeluarKeseluruhan = 0;
+                let totalKeuntunganBersih = 0;
+
+                // HITUNG TOTAL DARI SELURUH DATA YANG DIFILTER (dataToDisplay)
+                dataToDisplay.forEach(item => {
+                    const uangMasuk = parseFloat(item.uang_masuk) || 0;
+                    const uangKeluar = parseFloat(item.uang_keluar) || 0;
+                    const keuntunganItem = parseFloat(item.keuntungan_item) || 0; // Keuntungan per item/transaksi
+
+                    totalUangMasukKeseluruhan += uangMasuk;
+                    totalUangKeluarKeseluruhan += uangKeluar;
+                    totalKeuntunganBersih += keuntunganItem; // Menjumlahkan keuntungan/kerugian dari setiap item
+                });
+
+                // Paginasi: Ambil data untuk halaman saat ini
+                const start = (currentKeuanganPage - 1) * keuanganRowsPerPage;
+                const end = start + keuanganRowsPerPage;
+                const paginatedData = dataToDisplay.slice(start, end);
+
+                if (paginatedData.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="8">Tidak ada data keuangan ditemukan.</td></tr>';
+                } else {
+                    paginatedData.forEach((item, index) => {
+                        const row = tableBody.insertRow();
+                        row.insertCell(0).textContent = start + index + 1; // No urut
+                        
+                        let tanggalTransaksi = new Date(item.tanggal_transaksi);
+                        if (isNaN(tanggalTransaksi.getTime())) {
+                            tanggalTransaksi = '';
+                        } else {
+                            tanggalTransaksi = tanggalTransaksi.toLocaleString('id-ID', {
+                                year: 'numeric',
+                                month: '2-digit',
+                                day: '2-digit',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            }).replace(/\//g, '-').replace(',', '');
+                        }
+                        row.insertCell(1).textContent = tanggalTransaksi;
+                        row.insertCell(2).textContent = item.deskripsi || '-';
+                        row.insertCell(3).textContent = item.tipe || '-';
+                        row.insertCell(4).textContent = item.metode_pembayaran || '-';
+                        row.insertCell(5).textContent = formatRupiah(item.uang_masuk || 0);
+                        row.insertCell(6).textContent = formatRupiah(item.uang_keluar || 0);
+                        row.insertCell(7).textContent = formatRupiah(item.keuntungan_item || 0); // Keuntungan per item/transaksi
+                    });
+                }
+
+                // Update footer tabel dengan total keseluruhan
+                document.getElementById('totalUangMasuk').textContent = formatRupiah(totalUangMasukKeseluruhan);
+                document.getElementById('totalUangKeluar').textContent = formatRupiah(totalUangKeluarKeseluruhan);
+                document.getElementById('totalKeuntunganBersih').textContent = formatRupiah(totalKeuntunganBersih);
+
+
+                // Perbarui status tombol paginasi
+                updateKeuanganPaginationButtons(dataToDisplay.length); // Mengubah nama fungsi
+            }
+
+            // Fungsi untuk mengupdate tombol pagination
+            function updateKeuanganPaginationButtons(totalRows) { // Mengubah nama fungsi
+                const totalPages = Math.ceil(totalRows / keuanganRowsPerPage);
+                document.getElementById('prevPage').disabled = currentKeuanganPage === 1;
+                document.getElementById('nextPage').disabled = currentKeuanganPage === totalPages || totalPages === 0;
+                document.getElementById('currentPage').textContent = currentKeuanganPage;
+            }
+
+            // Fungsi untuk mengambil data keuangan dari API
+            async function fetchKeuanganData() { // Mengubah nama fungsi
+                const bulan = document.getElementById('filterBulan').value;
+                const tahun = document.getElementById('filterTahun').value;
+                const tanggal = document.getElementById('filterTanggal').value;
+                const search = document.getElementById('searchKeuangan').value; // Menggunakan ID yang benar
+                const username = localStorage.getItem('loggedInUser');
+
+                if (!username) {
+                    console.error('Username not found in localStorage. Cannot fetch data.');
+                    alert('Sesi Anda telah berakhir atau tidak ditemukan. Silakan login kembali.');
+                    window.location.href = '/login.html';
+                    return;
+                }
+
+                let url = '/api/keuangan'; // Endpoint API untuk keuangan
+                const params = new URLSearchParams();
+                if (bulan) params.append('bulan', bulan);
+                if (tahun) params.append('tahun', tahun);
+                if (tanggal) params.append('tanggal', tanggal);
+                if (search) params.append('search', search);
+
+                if (params.toString()) {
+                    url += '?' + params.toString();
+                }
+
+                try {
+                    console.log('Fetching keuangan data from URL:', url); // Log URL yang diminta
+                    const response = await fetch(url, {
+                        headers: {
+                            'X-Username': username
+                        }
+                    });
+
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        console.error(`HTTP error! Status: ${response.status}. Response from server:`, errorText);
+                        if (response.status === 401) {
+                            alert('Sesi Anda telah berakhir. Silakan login kembali.');
+                            window.location.href = '/login.html';
+                        }
+                        throw new Error(`Gagal memuat data keuangan. Status: ${response.status}. Pesan: ${errorText}`);
+                    }
+
+                    allKeuanganData = await response.json();
+                    console.log('Data Keuangan Diterima:', allKeuanganData); // Log data mentah yang diterima
+
+                    currentKeuanganPage = 1;
+                    displayKeuanganTableData(allKeuanganData); // Mengubah nama fungsi
+
+                } catch (error) {
+                    console.error('Error in fetchKeuanganData:', error);
+                    document.getElementById('keuanganTableBody').innerHTML = '<tr><td colspan="8">Gagal memuat data keuangan. Silakan periksa konsol browser dan server log untuk detail error.</td></tr>';
+                    document.getElementById('totalUangMasuk').textContent = formatRupiah(0);
+                    document.getElementById('totalUangKeluar').textContent = formatRupiah(0);
+                    document.getElementById('totalKeuntunganBersih').textContent = formatRupiah(0);
+                    updateKeuanganPaginationButtons(0); // Mengubah nama fungsi
+                }
+            }
+
+            // =========================================================
+            // === EVENT LISTENERS UNTUK FILTER DAN PAGINASI ===
+            // =========================================================
+
+            document.getElementById('btnCariBulanTahun').addEventListener('click', () => {
+                document.getElementById('filterTanggal').value = '';
+                fetchKeuanganData(); // Mengubah nama fungsi
+            });
+
+            document.getElementById('btnCariTanggal').addEventListener('click', () => {
+                document.getElementById('filterBulan').value = '';
+                document.getElementById('filterTahun').value = '';
+                fetchKeuanganData(); // Mengubah nama fungsi
+            });
+
+            document.getElementById('searchKeuangan').addEventListener('keyup', (event) => {
+                if (event.key === 'Enter' || event.target.value === '') {
+                    fetchKeuanganData(); // Mengubah nama fungsi
+                }
+            });
+
+            document.getElementById('prevPage').addEventListener('click', () => {
+                if (currentKeuanganPage > 1) {
+                    currentKeuanganPage--;
+                    displayKeuanganTableData(allKeuanganData); // Mengubah nama fungsi
+                }
+            });
+
+            document.getElementById('nextPage').addEventListener('click', () => {
+                const totalPages = Math.ceil(allKeuanganData.length / keuanganRowsPerPage);
+                if (currentKeuanganPage < totalPages) {
+                    currentKeuanganPage++;
+                    displayKeuanganTableData(allKeuanganData); // Mengubah nama fungsi
+                }
+            });
+
+            fetchKeuanganData(); // Panggil fungsi saat halaman dimuat
+
+            document.getElementById('btnDownload').addEventListener('click', () => {
+                const bulan = document.getElementById('filterBulan').value;
+                const tahun = document.getElementById('filterTahun').value;
+                const tanggal = document.getElementById('filterTanggal').value;
+                const search = document.getElementById('searchKeuangan').value;
+                const username = localStorage.getItem('loggedInUser');
+
+                if (!username) {
+                    alert('Sesi Anda telah berakhir atau tidak ditemukan. Silakan login kembali.');
+                    window.location.href = '/login.html';
+                    return;
+                }
+
+                let downloadUrl = '/api/keuangan/download?';
+
+                const params = new URLSearchParams();
+                if (bulan) params.append('bulan', bulan);
+                if (tahun) params.append('tahun', tahun);
+                if (tanggal) params.append('tanggal', tanggal);
+                if (search) params.append('search', search);
+                
+                params.append('x-username', username);
+
+                downloadUrl += params.toString();
+                window.location.href = downloadUrl;
+            });
+
+            console.log('Laporan Keuangan loaded!');
+        });
+    </script>
+</body>
+</html>
